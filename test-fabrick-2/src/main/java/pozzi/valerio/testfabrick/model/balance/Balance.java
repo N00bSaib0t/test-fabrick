@@ -1,5 +1,15 @@
 package pozzi.valerio.testfabrick.model.balance;
 
+
+/*TODO:
+-use lombok;
+-change date to correct date format (LocalDate? ZonedDateTime?);
+-balance and availableBalance to BigDecimal;
+-currency to enum;
+-add custom annotation for validation(?)
+*/
+
+
 public class Balance {
 
     private String date;
