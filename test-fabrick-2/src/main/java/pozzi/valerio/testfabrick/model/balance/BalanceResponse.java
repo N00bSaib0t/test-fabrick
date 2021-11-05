@@ -4,6 +4,14 @@ import pozzi.valerio.testfabrick.model.balance.Balance;
 
 import java.util.List;
 
+/*
+TODO:
+-use Lombok
+-maybe put Balance class as inner class?
+-change error type to List<ErrorResponseModel>
+-status could be an enum, but it's probably better to stay safe and use a String in this case
+*/
+
 public class BalanceResponse {
 
     private String status;
