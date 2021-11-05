@@ -6,10 +6,11 @@ import java.util.List;
 
 /*
 TODO:
--use Lombok
--maybe put Balance class as inner class?
--change error type to List<ErrorResponseModel>
--status could be an enum, but it's probably better to stay safe and use a String in this case
+- Use Lombok
+- Maybe put Balance class as inner class?
+- Change error type to List<ErrorResponseModel>
+- Status could be an enum, but it's probably better to stay safe and use a String in this case
+- Custom validation? Probably overkill. Better to add basic validation anyway, plus custom annotation for Balance Object.
 */
 
 public class BalanceResponse {
