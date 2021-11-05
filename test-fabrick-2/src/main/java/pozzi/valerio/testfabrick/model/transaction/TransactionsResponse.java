@@ -4,6 +4,10 @@ import pozzi.valerio.testfabrick.model.transaction.TransactionResponsePayload;
 
 import java.util.Arrays;
 
+/*
+TODO: Same as BalanceResponse.class
+*/
+
 public class TransactionsResponse {
 
     private String status;
