@@ -1,18 +1,13 @@
 package pozzi.valerio.testfabrick.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import pozzi.valerio.testfabrick.model.generic.ResponseModel;
 import pozzi.valerio.testfabrick.model.balance.Balance;
-import pozzi.valerio.testfabrick.model.balance.BalanceResponse;
-import pozzi.valerio.testfabrick.model.transaction.Transaction;
-import pozzi.valerio.testfabrick.model.transaction.TransactionsResponse;
-
-import java.util.List;
+import pozzi.valerio.testfabrick.model.transaction.TransactionList;
 
 @RestController
 public class Controller {
@@ -21,33 +16,45 @@ public class Controller {
     private RestTemplate restTemplate;
 
     @GetMapping("/{accountId}/balance")
-    public Balance getBalance(@PathVariable("accountId") String accountId ){
+    public ResponseModel<Balance> getBalance(@PathVariable("accountId") String accountId) {
 
         String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/balance";
         url = url.replace("{accountId}", accountId);
 
-        HttpEntity<String> entity = new HttpEntity<>("body", getHeaders());
-        ResponseEntity<BalanceResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, BalanceResponse.class);
+        HttpEntity<String> entity = new HttpEntity<>(null, getHeaders());
 
-        return response.getBody().getPayload();
+        ResponseEntity<ResponseModel<Balance>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ResponseModel<Balance>>() {}
+        );
+
+        return response.getBody();
     }
 
     @GetMapping("/{accountId}/transactions")
-    public List<Transaction> getTransactions(@PathVariable("accountId") String accountId , @RequestParam("fromAccountingDate") String fromAccountingDate, @RequestParam("toAccountingDate") String toAccountingDate) {
+    public ResponseModel<TransactionList> getTransactions(@PathVariable("accountId") String accountId,
+                                                          @RequestParam("fromAccountingDate") String fromAccountingDate,
+                                                          @RequestParam("toAccountingDate") String toAccountingDate) {
 
-        String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts?accountId={accountId}&fromAccountingDate={fromAccountingDate}&toAccountingDate={toAccountingDate}";
+        String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/transactions?fromAccountingDate={fromAccountingDate}&toAccountingDate={toAccountingDate}";
         url = url.replace("{accountId}", accountId);
         url = url.replace("{fromAccountingDate}", fromAccountingDate);
         url = url.replace("{toAccountingDate}", toAccountingDate);
 
-        HttpEntity<String> entity = new HttpEntity<>("body", getHeaders());
-        ResponseEntity<TransactionsResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, TransactionsResponse.class);
-        List<Transaction> transactions = response.getBody().getPayload().getList();
+        HttpEntity<String> entity = new HttpEntity<>(null, getHeaders());
+        ResponseEntity<ResponseModel<TransactionList>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ResponseModel<TransactionList>>() {}
+        );
 
-        return response.getBody().getPayload().getList();
+        return response.getBody();
     }
 
-    private HttpHeaders getHeaders(){
+    private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Auth-Schema", "S2S");
         headers.set("Api-Key", "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP");
