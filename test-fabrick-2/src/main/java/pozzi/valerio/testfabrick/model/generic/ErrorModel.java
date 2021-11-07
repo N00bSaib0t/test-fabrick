@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ErrorModel {
 
-    String fieldName;
-    String objectName;
-    String defaultMessage;
-    String code;
-    String description;
-    String params;
+    private String fieldName;
+    private String objectName;
+    private String defaultMessage;
+    private String code;
+    private String description;
+    private String params;
 
 }

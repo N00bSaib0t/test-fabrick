@@ -1,18 +1,18 @@
-package pozzi.valerio.testfabrick.model.transaction;
+package pozzi.valerio.testfabrick.model.moneytransfer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransactionList {
+public class Creditor {
 
-    private List<Transaction> list;
+    private String name;
+    private Account account;
+    private Address address;
 
 }

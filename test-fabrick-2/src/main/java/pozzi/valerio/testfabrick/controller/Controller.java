@@ -10,6 +10,7 @@ import pozzi.valerio.testfabrick.model.balance.Balance;
 import pozzi.valerio.testfabrick.model.transaction.TransactionList;
 
 @RestController
+@RequestMapping("/controller")
 public class Controller {
 
     @Autowired
@@ -18,7 +19,8 @@ public class Controller {
     @GetMapping("/{accountId}/balance")
     public ResponseModel<Balance> getBalance(@PathVariable("accountId") String accountId) {
 
-        String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/balance";
+        // String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/balance";
+        String url = "http://localhost:8080/mockapi/sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/balance";
         url = url.replace("{accountId}", accountId);
 
         HttpEntity<String> entity = new HttpEntity<>(null, getHeaders());
@@ -27,7 +29,8 @@ public class Controller {
                 url,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseModel<Balance>>() {}
+                new ParameterizedTypeReference<ResponseModel<Balance>>() {
+                }
         );
 
         return response.getBody();
@@ -38,7 +41,8 @@ public class Controller {
                                                           @RequestParam("fromAccountingDate") String fromAccountingDate,
                                                           @RequestParam("toAccountingDate") String toAccountingDate) {
 
-        String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/transactions?fromAccountingDate={fromAccountingDate}&toAccountingDate={toAccountingDate}";
+        //  String url = "https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/transactions?fromAccountingDate={fromAccountingDate}&toAccountingDate={toAccountingDate}";
+        String url = "http://localhost:8080/mockapi/sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/transactions?fromAccountingDate={fromAccountingDate}&toAccountingDate={toAccountingDate}";
         url = url.replace("{accountId}", accountId);
         url = url.replace("{fromAccountingDate}", fromAccountingDate);
         url = url.replace("{toAccountingDate}", toAccountingDate);
@@ -48,7 +52,8 @@ public class Controller {
                 url,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseModel<TransactionList>>() {}
+                new ParameterizedTypeReference<ResponseModel<TransactionList>>() {
+                }
         );
 
         return response.getBody();

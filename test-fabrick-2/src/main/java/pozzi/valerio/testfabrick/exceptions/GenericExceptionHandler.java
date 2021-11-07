@@ -25,7 +25,6 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(Exception e) {
         LinkedList<ErrorModel> errors = new LinkedList<>();
-
         errors.add(
                 ErrorModel.builder()
                         .description(e.getMessage())
@@ -40,14 +39,23 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler({UnauthorizedException.class})
+    public ResponseEntity<Object> handleUnauthorized(UnauthorizedException e){
+        return returnError("Unauthorized", e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler({BadRequestException.class})
+    public ResponseEntity<Object> handleBadRequest(BadRequestException e){
+        return returnError("Bad Request", e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({HttpClientErrorException.class})
-    public ResponseEntity<Object> handleHttpClientErrorException(Exception e) {
+    public ResponseEntity<Object> handleHttpClientErrorException(HttpClientErrorException e) {
 
         LinkedList<ErrorModel> errors = new LinkedList<>();
 
         errors.add(ErrorModel.builder()
                 .description(e.getMessage())
-                .defaultMessage("Generic error")
+                .defaultMessage("Problem with internal Http call")
                 .build());
 
         ResponseModel response = ResponseModel.builder()
@@ -92,4 +100,16 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(errors, status);
     }
+
+    private ResponseEntity returnError(String errorMessage, String description, HttpStatus status) {
+        ErrorModel error = ErrorModel.builder()
+                .defaultMessage(errorMessage)
+                .description(description)
+                .build();
+        LinkedList<ErrorModel> errors = new LinkedList<>();
+        errors.add(error);
+        ResponseModel<Object> response = ResponseModel.builder().status("KO").errors(errors).build();
+        return new ResponseEntity<Object>(response, status);
+    }
+
 }

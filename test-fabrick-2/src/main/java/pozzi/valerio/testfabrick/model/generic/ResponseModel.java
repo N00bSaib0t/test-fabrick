@@ -15,7 +15,7 @@ import java.util.LinkedList;
 public class ResponseModel<T> {
 
     private String status;
-    private LinkedList<ErrorModel> errors = new LinkedList<>();
+    private LinkedList<ErrorModel> errors;
     private T payload;
 
 }
