@@ -1,6 +1,5 @@
 package pozzi.valerio.testfabrick.controller;
 
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -12,9 +11,14 @@ import pozzi.valerio.testfabrick.model.balance.Balance;
 import pozzi.valerio.testfabrick.model.generic.ErrorModel;
 import pozzi.valerio.testfabrick.model.generic.ResponseModel;
 import pozzi.valerio.testfabrick.model.moneytransfer.*;
+import pozzi.valerio.testfabrick.model.moneytransfer.FeeType;
+import pozzi.valerio.testfabrick.model.moneytransfer.in.MoneyTransferIn;
+import pozzi.valerio.testfabrick.model.moneytransfer.out.*;
 import pozzi.valerio.testfabrick.model.transaction.Transaction;
 import pozzi.valerio.testfabrick.model.transaction.TransactionList;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -29,15 +33,15 @@ public class MockApi {
 
     @SneakyThrows
     @GetMapping("/sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/balance")
-    public ResponseEntity getBalance(@PathVariable("accountId") Long accountId,
-                                     @NonNull @RequestHeader("Auth-Schema") String authSchema,
-                                     @NonNull @RequestHeader("Api-Key") String apiKey) {
+    public ResponseEntity getBalance(@NotNull @PathVariable("accountId") Long accountId,
+                                     @NotNull @RequestHeader("Auth-Schema") String authSchema,
+                                     @NotNull @RequestHeader("Api-Key") String apiKey) {
 
         if (checkAuthentication(authSchema, apiKey)) {
-            if (accountId == 14537780) {
+            if (accountId == 123456) {
                 return returnObject(getFakeBalance());
             } else {
-                throw new BadRequestException();
+                throw new BadRequestException("AccountId not valid");
             }
         } else {
             throw new UnauthorizedException();
@@ -46,26 +50,38 @@ public class MockApi {
 
     @SneakyThrows
     @GetMapping("/sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/transactions")
-    public ResponseEntity getTransactionList(@PathVariable("accountId") Long accountId,
-                                             @NonNull @RequestHeader("Auth-Schema") String authSchema,
-                                             @NonNull @RequestHeader("Api-Key") String apiKey,
-                                             @NonNull @RequestParam("fromAccountingDate") String fromAccountingDate,
-                                             @NonNull @RequestParam("toAccountingDate") String toAccountingDate) {
+    public ResponseEntity getTransactionList(@NotNull @PathVariable("accountId") Long accountId,
+                                             @NotNull @RequestHeader("Auth-Schema") String authSchema,
+                                             @NotNull @RequestHeader("Api-Key") String apiKey,
+                                             @NotNull @RequestParam("fromAccountingDate") String fromAccountingDate,
+                                             @NotNull @RequestParam("toAccountingDate") String toAccountingDate) {
 
         if (checkAuthentication(authSchema, apiKey)) {
-            if (accountId == 14537780) {
+            if (accountId == 123456) {
                 return returnObject(getFakeTransactionList());
             } else {
-                throw new BadRequestException();
+                throw new BadRequestException("AccountId not valid");
             }
         } else {
             throw new UnauthorizedException();
         }
     }
 
-    @GetMapping("/sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/payments/money-transfers")
-    public ResponseEntity getMoneyTransfer(@PathVariable("accountId") Long accountId) {
-        return returnObject(getFakeMoneyTransfer());
+    @SneakyThrows
+    @PostMapping("/sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/payments/money-transfers")
+    public ResponseEntity getMoneyTransfer(@NotNull @PathVariable("accountId") Long accountId,
+                                           @NotNull @RequestHeader("Auth-Schema") String authSchema,
+                                           @NotNull @RequestHeader("Api-Key") String apiKey,
+                                           @NotNull @Valid @RequestBody MoneyTransferIn moneyTransferIn ) {
+        if (checkAuthentication(authSchema, apiKey)) {
+            if (accountId == 123456) {
+                return returnObject(getFakeMoneyTransfer());
+            } else {
+                throw new BadRequestException("AccountId not valid");
+            }
+        } else {
+            throw new UnauthorizedException();
+        }
     }
 
 
@@ -81,9 +97,9 @@ public class MockApi {
 
     private Balance getFakeBalance() {
         return Balance.builder()
-                .date("2018-08-17")
-                .balance("29.64")
-                .availableBalance("29.46")
+                .date(LocalDate.parse("2018-08-17"))
+                .balance(BigDecimal.valueOf(29.64))
+                .availableBalance(BigDecimal.valueOf(29.64))
                 .currency("EUR")
                 .build();
     }
@@ -96,7 +112,7 @@ public class MockApi {
                 .accountingDate(LocalDate.parse("2019-04-01"))
                 .valueDate(LocalDate.parse("2019-04-01"))
                 .type(new Transaction.TransactionType("GBS_TRANSACTION_TYPE", "GBS_TRANSACTION_TYPE_0023"))
-                .amount("-800")
+                .amount(BigDecimal.valueOf(-800))
                 .currency("EUR")
                 .description("BA JOHN DOE PAYMENT INVOICE 75/2017")
                 .build();
@@ -108,7 +124,7 @@ public class MockApi {
                 .accountingDate(LocalDate.parse("2019-04-01"))
                 .valueDate(LocalDate.parse("2019-04-01"))
                 .type(new Transaction.TransactionType("GBS_TRANSACTION_TYPE", "GBS_TRANSACTION_TYPE_0015"))
-                .amount("-1")
+                .amount(BigDecimal.valueOf(-1))
                 .currency("EUR")
                 .description("CO MONEY TRANSFER FEES")
                 .build();
@@ -118,9 +134,9 @@ public class MockApi {
         return TransactionList.builder().list(list).build();
     }
 
-    private MoneyTransfer getFakeMoneyTransfer() {
+    private MoneyTransferOut getFakeMoneyTransfer() {
 
-        return MoneyTransfer.builder()
+        return MoneyTransferOut.builder()
                 .moneyTransferId("452516859427")
                 .status(Status.EXECUTED)
                 .direction(Direction.OUTGOING)
@@ -133,8 +149,7 @@ public class MockApi {
                         .address(Address.builder()
                                 .address(null)
                                 .city(null)
-                                .countryCode(null)
-                                .build())
+                                .countryCode(null).build())
                         .build())
                 .debtor(Debtor.builder()
                         .name("")

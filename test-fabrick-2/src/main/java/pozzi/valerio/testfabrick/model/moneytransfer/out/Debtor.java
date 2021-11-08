@@ -1,10 +1,10 @@
-package pozzi.valerio.testfabrick.model.moneytransfer;
+package pozzi.valerio.testfabrick.model.moneytransfer.out;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import pozzi.valerio.testfabrick.model.moneytransfer.Account;
 
 @Data
 @AllArgsConstructor

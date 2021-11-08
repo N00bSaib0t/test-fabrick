@@ -1,21 +1,18 @@
-package pozzi.valerio.testfabrick.model.moneytransfer;
+package pozzi.valerio.testfabrick.model.moneytransfer.out;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import pozzi.valerio.testfabrick.model.moneytransfer.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MoneyTransfer {
+public class MoneyTransferOut {
 
     private String moneyTransferId;
     private Status status;
